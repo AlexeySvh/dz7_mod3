@@ -1,8 +1,8 @@
-    let clients = [
+    const clients = [
         {
             firstName: "Александр",
             lastName: "Иванчук",
-            date: "11-29-1990",
+            date: "11-23-1990",
             phone: '8 (929) 988-90-09',
             amounts: [2546, 2098, 764, 7266]
         },
@@ -36,34 +36,52 @@
         }
     ];
 
-    let  newClient = {};
+    const newClient = {
+        firstName : prompt("Введите ваше имя: "),
+        lastName : prompt("Введите вашу фамилию: "),
+        date : prompt("Введите вашу дату рождения (ММ-ДД-ГГГГ): "),
+        phone : prompt("Введите ваш номер телефона: "),
+        amounts : [],
+    };
 
-    newClient.firstName = prompt("Введите ваше имя: ");
-    newClient.lastName = prompt("Введите вашу фамилию: ");
-    newClient.date = prompt("Введите вашу дату рождения (ММ-ДД-ГГГГ): ");
-    newClient.phone = prompt("Введите ваш номер телефона: ");
-    newClient.amounts = [];
+    while (confirm(`Добавить покупку для клиента ${newClient.firstName}?`)) {
+        let price;
+        let input;
+        let retry = false;
+        do{
+            const promptText = retry ? "Неверный формат, попробуйте ещё раз. Введите сумму покупки:" : "Введите сумму покупки:";
 
-    while (confirm("Добавить покупку для клиента " +  newClient.firstName + "?")) {
-        let price = Number(prompt("Введите сумму покупки:"));
+            input = prompt(promptText);
+            if (input === null) {
+                break;
+            }
+            price = Number(input);
+
+            if (Number.isNaN(price) || price <= 0) {
+                retry = true;
+            }
+        } while(Number.isNaN(price) || price <= 0);
+        if(input === null) {
+            break;
+        }
+
         newClient.amounts.push(price);
     }
     clients.push(newClient);
+    console.log(newClient);
 
     function fullName(object){
-        return object.firstName + " " + object.lastName;
+        return `${object.firstName} ${object.lastName}`;
     }
-    function getBirthday(date){
-        let birthDate = new Date(date);
-        let today = new Date();
-        let formattedDate = birthDate.toLocaleString('ru-RU', {
-            day: 'numeric',
-            month: 'long'
-        });
-        if(birthDate.getMonth() === today.getMonth() && birthDate.getDate() === today.getDate()){
-            formattedDate += " (сегодня)";
+    function getBirthday(dateStr){
+        const options = {month: "long", day: "numeric"}
+        const birthday = new Date(dateStr);
+        let res = birthday.toLocaleString('ru-RU', options);
+        const today = new Date().toLocaleString('ru-RU', options);
+        if(res === today){
+            res += ' (сегодня)';
         }
-        return formattedDate;
+        return res;
     }
     function getAllAmount(amounts){
         let sum=0;
@@ -75,14 +93,14 @@
 
 
     function getAverageAmount(amounts){
-        let avarage = getAllAmount(amounts)/amounts.length;
-        return avarage.toFixed(1);
+        const average = getAllAmount(amounts)/amounts.length;
+        return average.toFixed(1);
     }
 
-    let showClients = (clients) => {
+    const showClients = (clients) => {
         let message;
         for(let i = 0; i<clients.length; i++){
-            message = "Клиент " + fullName(clients[i]) +" имеет среднюю сумму чека " + getAverageAmount(clients[i].amounts) + ". День рождения клиента: " + getBirthday((clients[i].date))+".";
+            message = `Клиент ${fullName(clients[i])} имеет среднюю сумму чека ${getAverageAmount(clients[i].amounts)}. День рождения клиента: ${getBirthday((clients[i].date))}.`;
             console.log(message);
         }
     }
@@ -95,7 +113,7 @@
         console.log(error.message);
     }
 
-    let bestClients = [
+    const bestClients = [
 
         {
             firstName: "Владимир",
@@ -133,7 +151,7 @@
                 moreAmountClient = fullName(clients[i]);
             }
         }
-        console.log("Больше всех потратил " + moreAmountClient + ". Сумма покупок: " + moreAmount + ".");
+        console.log(`Больше всех потратил ${moreAmountClient}. Сумма покупок: ${moreAmount}.`);
     }
     whoSpentMore(clients);
     whoSpentMore(bestClients);
